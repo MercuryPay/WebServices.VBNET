@@ -1,4 +1,4 @@
-WebServices.CSharp
+﻿WebServices.VB.net
 ====================
 
 VS 2010 console application processing transactions to our web services platform.

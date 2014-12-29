@@ -1,11 +1,13 @@
 ﻿WebServices.VBNET
 ====================
 
-VS 2013 Express application that processes transactions to our web services platform.
+VS 2013 Express application that processes transactions to our web services platform.  This example allows you to modify the webservices URL and the SOAPAction.  You can then open an xml file (a sample is included in the ExampleXML folder named:  E2E_CreditSale.xml) and press the 'Process Txn' button.  This will POST the loaded xml to the webservices URL using the soap action specified.
 
 3 step process to integrate to Mercury Web Services.
 
 ##Step 1: Build Soap Envelope
+
+There is an example xml file in the ExampleXML folder named:  E2E_CreditSale.xml.
   
 ```
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mer="http://www.mercurypay.com">

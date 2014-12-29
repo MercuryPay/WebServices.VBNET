@@ -5,24 +5,19 @@ Imports System.Xml
 
 Public Class Form1
 
-    Private Sub Form1_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-
+    Private Sub btnProcessTransaction_Click(sender As System.Object, e As System.EventArgs) Handles btnProcessTransaction.Click
+        ProcessTransaction()
     End Sub
 
 
-    Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles Button1.Click
-        DoThat()
-    End Sub
-
-
-    Private Sub DoThat()
+    Private Sub ProcessTransaction()
 
         Dim soapAction As String = ""
         Dim uriString As String = ""
         Dim returnValue As String = ""
 
-        uriString = TextBox2.Text
-        soapAction = TextBox3.Text
+        uriString = txtWebServicesURL.Text
+        soapAction = txtSOAPAction.Text
 
         Try
 
@@ -67,30 +62,28 @@ Public Class Form1
 
     End Sub
 
-    Private Sub Button2_Click(sender As System.Object, e As System.EventArgs) Handles Button2.Click
+    Private Sub btnClear_Click(sender As System.Object, e As System.EventArgs) Handles btnClear.Click
         TextBox4.Clear()
     End Sub
 
-    Private Sub Button3_Click(sender As System.Object, e As System.EventArgs) Handles Button3.Click
+    Private Sub btnLoadXml_Click(sender As System.Object, e As System.EventArgs) Handles btnLoadXml.Click
 
         Dim openFileDialog1 As New OpenFileDialog()
 
-        'openFileDialog1.InitialDirectory = "C:\"
         openFileDialog1.Title = "Browse XML Files"
 
         openFileDialog1.CheckFileExists = True
         openFileDialog1.CheckPathExists = True
 
         openFileDialog1.DefaultExt = "xml"
-        openFileDialog1.Filter = "Text files (*.xml)|*.xml|All files (*.*)|*.*"
-        openFileDialog1.FilterIndex = 2
+        openFileDialog1.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*"
+        openFileDialog1.FilterIndex = 1
         openFileDialog1.RestoreDirectory = True
 
         openFileDialog1.ReadOnlyChecked = True
         openFileDialog1.ShowReadOnly = True
 
         If openFileDialog1.ShowDialog() = DialogResult.OK Then
-            'TextBox1.Text = openFileDialog1.FileName
 
             Dim fileS As FileStream
             fileS = New FileStream(openFileDialog1.FileName, FileMode.Open, FileAccess.Read)
@@ -107,18 +100,17 @@ Public Class Form1
             End While
             i.Close()
 
-
         End If
 
     End Sub
 
 
     Protected Function FormatXml(xmlNode As Xml.XmlNode) As String
-        Dim bob As New StringBuilder()
+        Dim sb As New StringBuilder()
 
 
-        ' We will use stringWriter to push the formated xml into our StringBuilder bob.
-        Using stringWriter As New StringWriter(bob)
+        ' We will use stringWriter to push the formated xml into our StringBuilder.
+        Using stringWriter As New StringWriter(sb)
             ' We will use the Formatting of our xmlTextWriter to provide our indentation.
             Using xmlTextWriter As New XmlTextWriter(stringWriter)
                 xmlTextWriter.Formatting = Formatting.Indented
@@ -127,7 +119,7 @@ Public Class Form1
         End Using
 
 
-        Return bob.ToString()
+        Return sb.ToString()
     End Function
 
 End Class

@@ -1,73 +1,78 @@
-﻿WebServices.VB.net
+﻿WebServices.VBNET
 ====================
 
-VS 2010 console application processing transactions to our web services platform.
+VS 2013 Express application that processes transactions to our web services platform.
 
 3 step process to integrate to Mercury Web Services.
 
-##Step 1: Build Request with Key Value Pairs
-  
-Create a Dictionary&lt;string, object&gt; variable and add all the Key Value Pairs.
+##Step 1: Build Soap Envelope
   
 ```
-Dictionary<string, object> requestDictionary = new Dictionary<string, object>();
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mer="http://www.mercurypay.com">
+<soapenv:Header/>
+<soapenv:Body>
+<mer:CreditTransaction>
+<mer:tran xmlns="http://www.mercurypay.com">
+<![CDATA[<TStream> 
+<Transaction> 
+<MerchantID>019588466313922</MerchantID> 
+<TranType>Credit</TranType> 
+<TranCode>Sale</TranCode> 
+<InvoiceNo>21</InvoiceNo> 
+<RefNo>21</RefNo> 
+<Memo>Brian VB.NET WS Project</Memo> 
+<Frequency>OneTime</Frequency> 
+<RecordNo>RecordNumberRequested</RecordNo> 
+<PartialAuth>Allow</PartialAuth> 
+<Account><EncryptedFormat>MagneSafe</EncryptedFormat> 
+<AccountSource>Swiped</AccountSource> 
+<EncryptedBlock>2F8248964608156B2B1745287B44CA90A349905F905514ABE3979D7957F13804705684B1C9D5641C</EncryptedBlock> 
+<EncryptedKey>9500030000040C200026</EncryptedKey> 
+</Account> 
+<Amount> 
+<Purchase>10.00</Purchase> 
+</Amount> </Transaction> 
+</TStream>]]>
+</mer:tran>
+<mer:pw>xyz</mer:pw>
+</mer:CreditTransaction>
+</soapenv:Body>
+</soapenv:Envelope>
 
-requestDictionary.Add("MerchantID", merchantID);
-requestDictionary.Add("LaneID", laneID);
-requestDictionary.Add("TranType", "Credit");
-requestDictionary.Add("TranCode", "Sale");
-requestDictionary.Add("InvoiceNo", invoiceNo);
-requestDictionary.Add("RefNo", invoiceNo);
-requestDictionary.Add("Memo", memo);
-requestDictionary.Add("Frequency", "OneTime");
-requestDictionary.Add("RecordNo", "RecordNumberRequested");
-requestDictionary.Add("PartialAuth", "Allow");
-requestDictionary.Add("EncryptedFormat", "MagneSafe");
-requestDictionary.Add("AccountSource", "Swiped");
-requestDictionary.Add("EncryptedBlock", swipedCreditEncryptedBlock);
-requestDictionary.Add("EncryptedKey", swipedCreditEncryptedKey);
-requestDictionary.Add("Purchase", purchase);
-requestDictionary.Add("OperatorID", operatorID);
 ```
   
-##Step 2: Process the Transaction
+##Step 2: Process the Transaction (this code shows a direct POST)
 
-a. Create a service reference to our testing URL @ https://w1.mercurydev.net/ws/ws.asmx.
+a. Create a WebRequest object pointed at the testing URL @ https://w1.mercurydev.net/ws/ws.asmx.
 
-b. Use XMLHelper.BuildXMLRequest(Dictionary<string, object) to create the XML Request string.
+b. Make sure to set the SOAPAction header to the correct SOAPAction
 
-c. Call the CreditTransaction web method with XML Request string and Merchant Password.
-
-```
-string xmlRequest = XMLHelper.BuildXMLRequest(requestDictionary).ToString();
-string xmlResponse = string.Empty;
-
-using (MercuryWebServices.wsSoapClient client = new MercuryWebServices.wsSoapClient())
-{
-   xmlResponse = client.CreditTransaction(xmlRequest, password);
-}
-```
-
-##Step 3: Parse the XML Response
-
-Parse the XML Response using the XMLHelper.ParseXMLResponse(string xmlResponse) method.
-
-This method returns a Dictionary&lt;string, string&gt;.
-
-Approved transactions will have a CmdStatus equal to "Approved".
+c. Write the data to the request's stream
 
 ```
-Dictionary<string, string> responseDictionary = XMLHelper.ParseXMLResponse(xmlResponse);
+  Dim request As HttpWebRequest = DirectCast(WebRequest.Create(New Uri(uriString)), HttpWebRequest)
+  request.Credentials = CredentialCache.DefaultCredentials
+  request.Method = "POST"
+  request.ContentType = "text/xml; charset=utf-8"
+  request.Headers.Add([String].Format("SOAPAction: ""{0}""", soapAction))
+  request.ContentLength = buffer.Length
+  request.ReadWriteTimeout = 10
+  request.ProtocolVersion = HttpVersion.Version11
+  
+  Dim newStream As Stream = request.GetRequestStream()
+  newStream.Write(buffer, 0, buffer.Length)
+  newStream.Close()
+```
 
-if (responseDictionary.ContainsKey("CmdStatus")
-   && responseDictionary["CmdStatus"] == "Approved")
-{
-   // Approved logic goes here
-}
-else
-{
-   // Declined/Error logic goes here
-}
+##Step 3: Wait for the response and then parse the response
+
+
+```
+  Dim response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)
+  Dim receiveStream As Stream = response.GetResponseStream()
+  Dim readStream As New StreamReader(receiveStream, Encoding.UTF8)
+  Dim responseData As String = readStream.ReadToEnd()
+  
 ```
 
 ###©2014 Mercury Payment Systems, LLC - all rights reserved.

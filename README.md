@@ -66,7 +66,7 @@ c. Write the data to the request's stream
   newStream.Close()
 ```
 
-##Step 3: Parse the response
+##Step 3: Parse the Response
 
 
 ```

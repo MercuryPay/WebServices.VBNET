@@ -22,7 +22,7 @@ There is an example xml file in the ExampleXML folder named:  E2E_CreditSale.xml
 <TranCode>Sale</TranCode> 
 <InvoiceNo>21</InvoiceNo> 
 <RefNo>21</RefNo> 
-<Memo>Brian VB.NET WS Project</Memo> 
+<Memo>Mercury Web Services VB Test App</Memo> 
 <Frequency>OneTime</Frequency> 
 <RecordNo>RecordNumberRequested</RecordNo> 
 <PartialAuth>Allow</PartialAuth> 

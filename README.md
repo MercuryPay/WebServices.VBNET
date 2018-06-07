@@ -1,5 +1,6 @@
 ﻿WebServices.VBNET
 ====================
+<a href="https://developer.vantiv.com/?utm_campaign=githubcta&utm_medium=hyperlink&utm_source=github&utm_content=gotquestions">Got questions? Connect with our experts on Vantiv ONE.</a>
 
 VS 2013 Express application that processes transactions to our web services platform.  This example allows you to modify the webservices URL and the SOAPAction.  You can then open an xml file (a sample is included in the ExampleXML folder named:  E2E_CreditSale.xml) and press the 'Process Txn' button.  This will POST the loaded xml to the webservices URL using the soap action specified.
 
